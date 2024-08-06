@@ -87,13 +87,20 @@ const items = [{
 const wrapperForItem = document.querySelector('#item-template');
 const animalsCollection = document.querySelector('#shop-items');
 
+
+
 function createAnimal(item) {
     const animal = wrapperForItem.content.cloneNode(true);
     animal.querySelector('h1').textContent = item.title;
     animal.querySelector('p').textContent = item.description;
     animal.querySelector('.price').textContent = item.price;
-    animal.querySelector('.tags').textContent = item.tags.join(' ');
-    animal.querySelector('.tags').classList.add('tag');
+    const tagsWrapper = animal.querySelector('.tags');
+    item.tags.forEach((i) => {
+        const tag = document.createElement('span');
+        tag.textContent = i;
+        tag.classList.add('tag');
+        tagsWrapper.append(tag);
+    });
     animal.querySelector('img').src = item.img;
     return animal;
 };
@@ -107,22 +114,22 @@ const button = document.querySelector('#search-btn');
 const inputText = document.querySelector('#search-input');
 const nothingFound = document.querySelector('#nothing-found');
 button.addEventListener('click', function() {
-    let searchItem = inputText.value.trim().toLowerCase();
+    const searchItem = inputText.value.trim().toLowerCase();
     let searchResults = [...items];
 
     for (let item of items) {
-
-        searchResults = items.filter((item) => item.title.toLowerCase().includes(searchItem));
         animalsCollection.innerHTML = '';
-        animalsCollection.prepend(searchResults);
+        searchResults = items.filter((item) => item.title.toLowerCase().includes(searchItem));
+        searchResults.forEach((elem) => {
+
+            animalsCollection.append(createAnimal(elem));
+        });
+
         nothingFound.textContent = "";
         if (searchResults.length === 0) {
             animalsCollection.innerHTML = '';
             nothingFound.textContent = "Ничего не найдено";
         };
     };
-
     inputText.value = ' ';
-
-    return animalsCollection;
 });
